@@ -2,10 +2,20 @@ package com.example.alpha;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,9 +27,14 @@ import com.google.firebase.auth.FirebaseUser;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
+import java.io.File;
+
 public class MainActivity extends AppCompatActivity {
+    Uri photoUri;
     TextView moveLoginStateET, currentLoginStateET;
     EditText mailET, passwordET;
+    LinearLayout addProfileLayout;
+    ImageView profile;
 
     final boolean SIGN_UP_STATE = false;
     boolean currentState = SIGN_UP_STATE;
@@ -33,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
         currentLoginStateET = (TextView) findViewById(R.id.currentLoginStateET);
         mailET = (EditText) findViewById(R.id.mailET);
         passwordET = (EditText) findViewById(R.id.passwordET);
+        addProfileLayout = (LinearLayout) findViewById(R.id.addProfileLayout);
+        profile = (ImageView) findViewById(R.id.profile);
     }
 
     @Override
@@ -52,10 +69,12 @@ public class MainActivity extends AppCompatActivity {
         if (currentState == SIGN_UP_STATE){
             moveLoginStateET.setText("להתחברות");
             currentLoginStateET.setText("הרשמה");
+            addProfileLayout.setVisibility(View.VISIBLE);
         }
         else {
             moveLoginStateET.setText("להרשמה");
             currentLoginStateET.setText("התחברות");
+            addProfileLayout.setVisibility(View.GONE);
         }
     }
 
@@ -131,5 +150,75 @@ public class MainActivity extends AppCompatActivity {
     public void signout(View view) {
         FBref.auth.signOut();
         Toast.makeText(this, "התנתק בהצלחה", Toast.LENGTH_SHORT).show();
+    }
+
+    public void getImageFromUser(View view) {
+        // check if we have permission of saving the captured image
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 200);
+        }
+        else {
+            // if there is a permission already
+            openImageChooserIntent();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 200) {
+            // if the permission granted - open the intent of choosing or capturing the file
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openImageChooserIntent();
+            } else {
+                Toast.makeText(this, "נא לאשר הרשאת אחסון לאפליקציה", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void openImageChooserIntent()
+    {
+        // Create new intent and set its type to image
+        Intent pickIntent = new Intent();
+        pickIntent.setAction(Intent.ACTION_GET_CONTENT);
+        pickIntent.setType("image/*");
+
+        // Intent for camera activity to capture a new picture
+        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        File tmpFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "image.jpg");
+
+        photoUri = Uri.fromFile(tmpFile);
+        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+
+        // Title of the popup intent
+        String pickTitle = "בחר תמונה";
+        Intent chooserIntent = Intent.createChooser(pickIntent, pickTitle);
+        chooserIntent.putExtra
+                (
+                        Intent.EXTRA_INITIAL_INTENTS,
+                        new Intent[]{takePhotoIntent}
+                );
+
+        startActivityForResult(chooserIntent, 345);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        if (requestCode == 345) {
+            if (resultCode == RESULT_OK) {
+                // if returned From Camera (there is no returned intent)
+                if ((imageReturnedIntent == null) || (imageReturnedIntent.getData() == null))
+                {
+                    profile.setImageURI(photoUri);
+                }
+                else // from storage
+                {
+                    Uri selectedFile = imageReturnedIntent.getData();
+                    profile.setImageURI(selectedFile);
+                }
+            }
+        }
     }
 }
