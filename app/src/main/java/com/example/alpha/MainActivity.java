@@ -65,57 +65,67 @@ public class MainActivity extends AppCompatActivity {
 
         if ((EmailValidator.getInstance().isValid(email)) && (password.length() >= 6)) {
             if (currentState == SIGN_UP_STATE) {
-                FBref.auth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success
-                                    Toast.makeText(MainActivity.this, "הרשמה בוצעה בהצלחה", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    String errorCode = ((FirebaseAuthException) task.getException()).getErrorCode();
-
-                                    if (errorCode.equals("ERROR_EMAIL_ALREADY_IN_USE")) {
-                                        Toast.makeText(MainActivity.this, "כתובת המייל כבר בשימוש", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(MainActivity.this, "הרשמה נכשלה. אנא נסה שנית", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-                        });
+                signup(email, password);
             } else { // login
-                FBref.auth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success
-                                    Toast.makeText(MainActivity.this, "התחברות בוצעה בהצלחה", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    String errorCode = ((FirebaseAuthException) task.getException()).getErrorCode();
-
-                                    // If sign in fails, display a message to the user.
-                                    if (errorCode.equals("ERROR_WRONG_PASSWORD")) {
-                                        Toast.makeText(MainActivity.this, "סיסמה שגוייה. אנא נסה שנית", Toast.LENGTH_SHORT).show();
-                                    }
-                                    else if (errorCode.equals("ERROR_USER_NOT_FOUND"))
-                                    {
-                                        Toast.makeText(MainActivity.this, "משתמש בעל כתובת מייל זו לא נמצא!", Toast.LENGTH_SHORT).show();
-                                    }
-                                    else
-                                    {
-                                        Toast.makeText(MainActivity.this, "התחברות נכשלה. אנא נסה שנית", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-                        });
+                login(email, password);
             }
         }
         else
         {
             Toast.makeText(this, "כתובת המייל או הסיסמה בפורמט לא תקין", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void signup(String email, String password)
+    {
+        FBref.auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success
+                            Toast.makeText(MainActivity.this, "הרשמה בוצעה בהצלחה", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            String errorCode = ((FirebaseAuthException) task.getException()).getErrorCode();
+
+                            if (errorCode.equals("ERROR_EMAIL_ALREADY_IN_USE")) {
+                                Toast.makeText(MainActivity.this, "כתובת המייל כבר בשימוש", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(MainActivity.this, "הרשמה נכשלה. אנא נסה שנית", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void login(String email, String password)
+    {
+        FBref.auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success
+                            Toast.makeText(MainActivity.this, "התחברות בוצעה בהצלחה", Toast.LENGTH_SHORT).show();
+                        } else {
+                            String errorCode = ((FirebaseAuthException) task.getException()).getErrorCode();
+
+                            // If sign in fails, display a message to the user.
+                            if (errorCode.equals("ERROR_WRONG_PASSWORD")) {
+                                Toast.makeText(MainActivity.this, "סיסמה שגוייה. אנא נסה שנית", Toast.LENGTH_SHORT).show();
+                            }
+                            else if (errorCode.equals("ERROR_USER_NOT_FOUND"))
+                            {
+                                Toast.makeText(MainActivity.this, "משתמש בעל כתובת מייל זו לא נמצא!", Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                            {
+                                Toast.makeText(MainActivity.this, "התחברות נכשלה. אנא נסה שנית", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
     }
 
     public void signout(View view) {
