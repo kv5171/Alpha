@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import android.Manifest;
 import android.content.Intent;
@@ -235,8 +237,12 @@ public class MainActivity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(imageReturnedIntent);
             if (resultCode == RESULT_OK)
             {
+                // create a round image for the profile image view
                 Uri resultUri = result.getUri();
-                profile.setImageURI(resultUri);
+                RoundedBitmapDrawable roundDrawable = RoundedBitmapDrawableFactory.create(getResources(), resultUri.getPath());
+                roundDrawable.setCircular(true);
+                profile.setImageDrawable(roundDrawable);
+
             }
             else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE)
             {
