@@ -24,6 +24,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
@@ -211,13 +213,34 @@ public class MainActivity extends AppCompatActivity {
                 // if returned From Camera (there is no returned intent)
                 if ((imageReturnedIntent == null) || (imageReturnedIntent.getData() == null))
                 {
-                    profile.setImageURI(photoUri);
+                    // start cropping activity (circle)
+                    CropImage.activity(photoUri)
+                            .setCropMenuCropButtonTitle("חתוך")
+                            .setCropShape(CropImageView.CropShape.OVAL)
+                            .setFixAspectRatio(true)
+                            .start(this);
                 }
                 else // from storage
                 {
                     Uri selectedFile = imageReturnedIntent.getData();
-                    profile.setImageURI(selectedFile);
+                    CropImage.activity(selectedFile)
+                            .setCropMenuCropButtonTitle("חתוך")
+                            .setCropShape(CropImageView.CropShape.OVAL)
+                            .setFixAspectRatio(true)
+                            .start(this);
                 }
+            }
+        }
+        else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(imageReturnedIntent);
+            if (resultCode == RESULT_OK)
+            {
+                Uri resultUri = result.getUri();
+                profile.setImageURI(resultUri);
+            }
+            else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE)
+            {
+                Toast.makeText(this, "התרחשה בעיה. אנא נסה שנית", Toast.LENGTH_SHORT).show();
             }
         }
     }
