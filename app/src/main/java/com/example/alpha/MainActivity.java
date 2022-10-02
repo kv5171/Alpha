@@ -22,10 +22,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -34,7 +37,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
-    Uri photoUri;
+    Uri photoUri, roundImageUri;
     TextView moveLoginStateET, currentLoginStateET;
     EditText mailET, passwordET;
     LinearLayout addProfileLayout;
@@ -54,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
         passwordET = (EditText) findViewById(R.id.passwordET);
         addProfileLayout = (LinearLayout) findViewById(R.id.addProfileLayout);
         profile = (ImageView) findViewById(R.id.profile);
+
+        roundImageUri = null;
     }
 
     @Override
@@ -88,7 +93,14 @@ public class MainActivity extends AppCompatActivity {
 
         if ((EmailValidator.getInstance().isValid(email)) && (password.length() >= 6)) {
             if (currentState == SIGN_UP_STATE) {
-                signup(email, password);
+                // if image was captured
+                if (roundImageUri != null) {
+                    signup(email, password);
+                }
+                else
+                {
+                    Toast.makeText(this, "נא לבחור תמונת פרופיל!", Toast.LENGTH_SHORT).show();
+                }
             } else { // login
                 login(email, password);
             }
@@ -108,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success
                             Toast.makeText(MainActivity.this, "הרשמה בוצעה בהצלחה", Toast.LENGTH_SHORT).show();
+                            uploadImage();
                         } else {
                             // If sign in fails, display a message to the user.
                             String errorCode = ((FirebaseAuthException) task.getException()).getErrorCode();
@@ -238,8 +251,8 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK)
             {
                 // create a round image for the profile image view
-                Uri resultUri = result.getUri();
-                RoundedBitmapDrawable roundDrawable = RoundedBitmapDrawableFactory.create(getResources(), resultUri.getPath());
+                roundImageUri = result.getUri();
+                RoundedBitmapDrawable roundDrawable = RoundedBitmapDrawableFactory.create(getResources(), roundImageUri.getPath());
                 roundDrawable.setCircular(true);
                 profile.setImageDrawable(roundDrawable);
 
@@ -249,5 +262,21 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "התרחשה בעיה. אנא נסה שנית", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void uploadImage()
+    {
+        UploadTask uploadTask = FBref.storageRef.child("images/"+ FBref.auth.getUid()).putFile(roundImageUri);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(MainActivity.this, "התרחשה בעיה. נא נסה שנית", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(MainActivity.this, "העלאה הסתיימה בהצלחה", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
