@@ -59,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
         profile = (ImageView) findViewById(R.id.profile);
 
         roundImageUri = null;
+
+        Intent si = new Intent(MainActivity.this, TestActivity.class);
+        startActivity(si);
     }
 
     @Override
