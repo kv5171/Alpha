@@ -62,7 +62,7 @@
                 android:id="@+id/question"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="4"
+                android:layout_weight="7"
                 android:gravity="center_horizontal"
                 android:text="שאלה"
                 android:textSize="18sp" />
@@ -76,13 +76,13 @@
                 android:id="@+id/questionImage"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="4"
+                android:layout_weight="7"
                 tools:srcCompat="@tools:sample/avatars" />
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_weight="0.5" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
@@ -92,49 +92,57 @@
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_weight="0.5" />
 
             <Button
                 android:id="@+id/answerA"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="3"
+                android:onClick="changeSelectedAnswer"
+                android:tag="0"
                 android:text="א" />
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_weight="0.5" />
 
             <Button
                 android:id="@+id/answerB"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="3"
+                android:onClick="changeSelectedAnswer"
+                android:tag="1"
                 android:text="ב" />
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_weight="0.5" />
 
             <Button
                 android:id="@+id/answerC"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="3"
+                android:onClick="changeSelectedAnswer"
+                android:tag="2"
                 android:text="ג" />
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:layout_weight="0.5" />
 
             <Button
                 android:id="@+id/answerD"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="3"
+                android:onClick="changeSelectedAnswer"
+                android:tag="3"
                 android:text="ד" />
 
         </LinearLayout>
@@ -164,19 +172,9 @@
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:text=">שאלה הבאה " />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.5" />
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:text="שאלה קודמת  " />
+            android:layout_weight="8"
+            android:onClick="checkAnswer"
+            android:text="סיום" />
 
         <Space
             android:layout_width="0dp"
