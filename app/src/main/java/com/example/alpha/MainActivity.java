@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         roundImageUri = null;
 
-        Intent si = new Intent(MainActivity.this, TestActivity.class);
+        Intent si = new Intent(MainActivity.this, TimerActivity.class);
         startActivity(si);
     }
 

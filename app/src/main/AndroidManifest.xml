@@ -12,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/Theme.Alpha">
-        <activity android:name=".TestActivity"></activity>
+        <activity android:name=".TimerActivity"></activity>
+        <activity android:name=".TestActivity" />
+        <receiver android:name=".MyReciever" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
