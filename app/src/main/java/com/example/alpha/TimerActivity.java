@@ -1,5 +1,6 @@
 package com.example.alpha;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlarmManager;
@@ -8,6 +9,8 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -48,5 +51,40 @@ public class TimerActivity extends AppCompatActivity {
                 }, hour, minute, true);
         // display our time picker dialog.
         timePickerDialog.show();
+    }
+    /**
+     * Create the options menu
+     *
+     * @param menu the menu
+     * @return true if success
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    /**
+     * Go where clicked
+     *
+     * @param item the item in menu that was clicked
+     *  @return true if success
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.test)
+        {
+            Intent si = new Intent(this, TestActivity.class);
+            startActivity(si);
+        }
+        else if (id == R.id.login)
+        {
+            Intent si = new Intent(this, MainActivity.class);
+            startActivity(si);
+        }
+
+        return true;
     }
 }

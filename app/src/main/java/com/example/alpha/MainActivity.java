@@ -14,6 +14,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -59,9 +61,6 @@ public class MainActivity extends AppCompatActivity {
         profile = (ImageView) findViewById(R.id.profile);
 
         roundImageUri = null;
-
-        Intent si = new Intent(MainActivity.this, TimerActivity.class);
-        startActivity(si);
     }
 
     @Override
@@ -281,5 +280,41 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "העלאה הסתיימה בהצלחה", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    /**
+     * Create the options menu
+     *
+     * @param menu the menu
+     * @return true if success
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    /**
+     * Go where clicked
+     *
+     * @param item the item in menu that was clicked
+     *  @return true if success
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.test)
+        {
+            Intent si = new Intent(this, TestActivity.class);
+            startActivity(si);
+        }
+        else if (id == R.id.timer)
+        {
+            Intent si = new Intent(this, TimerActivity.class);
+            startActivity(si);
+        }
+
+        return true;
     }
 }

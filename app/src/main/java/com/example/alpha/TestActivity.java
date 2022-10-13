@@ -3,9 +3,12 @@ package com.example.alpha;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -147,5 +150,40 @@ public class TestActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+    /**
+     * Create the options menu
+     *
+     * @param menu the menu
+     * @return true if success
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    /**
+     * Go where clicked
+     *
+     * @param item the item in menu that was clicked
+     *  @return true if success
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.login)
+        {
+            Intent si = new Intent(this, MainActivity.class);
+            startActivity(si);
+        }
+        else if (id == R.id.timer)
+        {
+            Intent si = new Intent(this, TimerActivity.class);
+            startActivity(si);
+        }
+
+        return true;
     }
 }
